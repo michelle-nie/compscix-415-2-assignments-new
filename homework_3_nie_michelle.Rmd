@@ -4,16 +4,118 @@ author: "Michelle Nie"
 date: "2/12/19"
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
-```{r}
-plot(cars)
+```{r warning=FALSE, message=FALSE}
+library(nycflights13)
+library(tidyverse)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+# 3.8.1 Exercises
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+## 1) What is the problem with this plot? How could you improve it?
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()
+```
+
+- The problem with this plot is that hwy and cty are so closely correlated that the plot looks messy.
+- I would instead use a smooth line chart like below:
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_smooth()
+```
+
+## 2) What parameters to geom_jitter() control the amount of jittering?
+
+- Width and Height control the amount of jittering (vertical and horizontal jitter, respectively).
+
+
+## 3) Compare and contrast geom_jitter() with geom_count().
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_jitter()
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_count()
+
+```
+
+- geom_jitter() and geom_count() both create scatterplots that attempt to point out overlapping points. However, geom_count() produces points of different sizes corresponding to the number of instances of each observation at each location, and it produces a legend for the different sizes. On the other hand, geom_jitter() simply jitters overlapping points around slightly so that they do not overlap.
+
+
+## 4) What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
+
+```{r}
+
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = drv, y = hwy, fill = class)) +
+  ggtitle("default")
+
+
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = drv, y = hwy, fill = class), position = "dodge") +
+  ggtitle("dodge")
+
+
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = drv, y = hwy, fill = class), position = "identity") +
+  ggtitle("identity")
+
+
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = drv, y = hwy, fill = class), position = "jitter") +
+  ggtitle("jitter")
+```
+
+- The default position adjustment for geom_boxplot() is "dodge" - the resulting graph looks nearly identical to the default graph.
+
+
+# Section 3.9.1: #2 and #4 only
+
+## 2) What does labs() do? Read the documentation.
+
+- labs() creates labels for plots, such as the title, x-axis label, and y-axis label.
+
+## 4) What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() + 
+  geom_abline() +
+  coord_fixed()
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() + 
+  geom_abline() 
+
+```
+
+- The plot tells you that cty and hwy have a positive correlation with a slope > 1.
+- coord_fixed() is important because it fixes the aspect of the plot so that it is 1:1. This prevents the skewing of data by distorting axes.
+- geom_abline() creates a reference line on the plot. By default the slope is 1.
+
+
+# Section 4.4: #1 and #2 only
+
+## 1) Why does this code not work?
+
+- The second "my_varıable" actually includes a dotless "i", or "ı".
+
+
+## 2) Tweak each of the following R commands so that they run correctly:
+
+```{r}
+library(tidyverse)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+filter(mpg, cyl == 8) # fixed typo in filter, added double equal sign
+filter(diamonds, carat > 3) # fixed typo in diamonds
+```
+
+
