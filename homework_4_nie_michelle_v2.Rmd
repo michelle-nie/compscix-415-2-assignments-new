@@ -75,14 +75,65 @@ cancelled %>%
 
 ## 6) What does the sort argument to count() do. When might you use it?
 
-```{r}
+- sort(), if true, will sort output in descending order. For example, if you want to sort n in descending order by carrier:
 
+```{r}
+cancelled %>% 
+  count(carrier, sort = TRUE)
 ```
 
 
 
 ## Extra Credit - 5)
 
+
 # Section 10.5: #1, #2, #3 and #6 only
+
+
+## 1) How can you tell if an object is a tibble? (Hint: try printing mtcars, which is a regular data frame).
+
+```{r}
+print(mtcars)
+```
+
+- You can tell if an object is a tibble if, unlike with data frames, it only prints the first 10 rows.
+- Additionally, you can subset tibbles and extract columns from them.
+
+## 2) Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+```{r}
+df_tbl <- as_tibble(df)
+df_tbl$x
+df_tbl[, "xyz"]
+df_tbl[, c("abc", "xyz")]
+```
+
+- (1) Extracting x from the data frame is possible, but you cannot extract x from the equivalent tibble.
+- (2) The second operation on a data frame tells you that here is one row and that "a" is in the row, but the operation on a tibble prints it out nicely in a table format. The format of this operation on a data frame is frustrating because it does not allow you to visualize the data.
+- (3) The third operation gives the same result on the data frame and the table.
+
+
+## 3) If you have the name of a variable stored in an object, e.g. var <- "mpg", how can you extract the reference variable from a tibble?
+
+```{r}
+var <- "mpg"
+my_tibble <- as_tibble(mtcars)
+
+my_tibble$var
+my_tibble[[var]]
+
+```
+
+- You have to extract the variable by using the double brackets, as in my_tibble[[var]]. Using the $ operator will look for a column called "var".
+
+## 6) 
+
 # Section 12.3.3: #2, #3 and #4 only
 # Section 12.4.3: #1 and #2 onl 
