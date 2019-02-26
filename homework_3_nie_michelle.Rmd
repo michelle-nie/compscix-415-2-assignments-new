@@ -120,17 +120,30 @@ filter(diamonds, carat > 3) # fixed typo in diamonds
 
 # Section 5.2.4: #1, #3 and #4 only.
 
+<<<<<<< HEAD
+=======
+# Section 5.2.4: #1, #3 and #4 only
+
+>>>>>>> fac171ab71d6a3ccbf2d0ccdde0d741a19ad8b66
 ## 1) Find all flights that
 
 ### Had an arrival delay of two or more hours
 
 ```{r}
+<<<<<<< HEAD
 library(tidyverse)
 library(nycflights13)
 
 filter(flights, arr_delay >= 120)
 ```
 
+=======
+library(nycflights13)
+
+filter(flights, arr_delay >= 120)
+
+```
+>>>>>>> fac171ab71d6a3ccbf2d0ccdde0d741a19ad8b66
 
 
 ### Flew to Houston (IAH or HOU)
@@ -139,6 +152,10 @@ filter(flights, arr_delay >= 120)
 filter(flights, dest %in% c("IAH", "HOU"))
 ```
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fac171ab71d6a3ccbf2d0ccdde0d741a19ad8b66
 ### Were operated by United, American, or Delta
 
 ```{r}
@@ -154,8 +171,121 @@ filter(flights, month %in% c(7,8,9))
 ### Arrived more than two hours late, but didn’t leave late
 
 ```{r}
+<<<<<<< HEAD
 filter(flights, month %in% c(7,8,9))
 ```
 
 ### Were delayed by at least an hour, but made up over 30 minutes in flight
 ### Departed between midnight and 6am (inclusive)
+=======
+filter(flights,
+       arr_delay > 120,
+       dep_delay == 0)
+```
+
+### Were delayed by at least an hour, but made up over 30 minutes in flight
+
+```{r}
+filter(flights,
+       dep_delay >= 60,
+       arr_delay <= -30)
+```
+
+### Departed between midnight and 6am (inclusive)
+
+```{r}
+filter(flights, dep_time <= 0600)
+```
+
+## 3) How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+
+- 8,255 flights have a missing dep_time. 
+- Other variables that are missing are dep_delay, arr_time, arr_delay, and air_time.
+- These rows most likely represent flights that were canceled.
+
+```{r}
+filter(flights, is.na(dep_time))
+```
+
+
+
+## 4) Why is NA ^ 0 not missing? Why is NA | TRUE not missing? Why is FALSE & NA not missing? Can you figure out the general rule? (NA * 0 is a tricky counterexample!)
+
+```{r}
+NA ^ 0
+```
+
+- The above is not missing because anything to the power of 0 is 1, even if it is a null/missing value.
+
+```{r}
+NA | TRUE
+
+```
+
+- The above is not missing because the expression evaluates to TRUE if either side of the "|" evaluates to TRUE. 
+
+```{r}
+FALSE & NA
+```
+
+- The above evaluates to FALSE because the outcome can be evaluated with incomplete information. If one of the values is missing, it can still evaluate to FALSE.
+
+- My prediction of the general rule: 
+-- Anything to the power of 0 is 1. 
+-- When `NA is used in an OR operator with TRUE, it can evaluate to TRUE. When it is used in an AND operator with FALSE, it can evaluate to FALSE. If you switch the operators in either scenario, the expressions will evaluate to NA.
+
+
+# Section 5.4.1: #1 and #3 only
+
+## 1) Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+```
+
+```{r}
+select(flights, dep_time:arr_delay, -sched_dep_time, -sched_arr_time)
+```
+
+```{r}
+select(flights, 
+       starts_with("dep"),
+       starts_with("arr")
+)
+```
+
+
+```{r}
+select(flights, 
+       dep_time, arr_time,
+       ends_with("delay")
+)
+```
+
+```{r}
+select(flights, 
+       ends_with("delay"),
+       ends_with("time"),
+       -(contains("sched")),
+       -(contains("air"))
+)
+```
+
+
+## 3) What does the `one_of()` function do? Why might it be helpful in conjunction with this vector?
+
+- According to the help article, `one_of()` matches variable names in a character vector.
+- It can be useful because you can select multiple columns by storing it in a variable and calling it with `one_of()`. 
+
+
+```{r}
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+
+select(flights, one_of(vars))
+
+```
+
+
+
+
+>>>>>>> fac171ab71d6a3ccbf2d0ccdde0d741a19ad8b66
