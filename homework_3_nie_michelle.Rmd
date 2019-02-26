@@ -118,4 +118,44 @@ filter(mpg, cyl == 8) # fixed typo in filter, added double equal sign
 filter(diamonds, carat > 3) # fixed typo in diamonds
 ```
 
+# Section 5.2.4: #1, #3 and #4 only.
 
+## 1) Find all flights that
+
+### Had an arrival delay of two or more hours
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+
+filter(flights, arr_delay >= 120)
+```
+
+
+
+### Flew to Houston (IAH or HOU)
+
+```{r}
+filter(flights, dest %in% c("IAH", "HOU"))
+```
+
+### Were operated by United, American, or Delta
+
+```{r}
+filter(flights, carrier %in% c("UA", "AA", "DL"))
+```
+
+### Departed in summer (July, August, and September)
+
+```{r}
+filter(flights, month %in% c(7,8,9))
+```
+
+### Arrived more than two hours late, but didn’t leave late
+
+```{r}
+filter(flights, month %in% c(7,8,9))
+```
+
+### Were delayed by at least an hour, but made up over 30 minutes in flight
+### Departed between midnight and 6am (inclusive)
