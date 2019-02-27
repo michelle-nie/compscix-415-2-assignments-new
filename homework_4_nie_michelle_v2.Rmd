@@ -10,7 +10,7 @@ output:
 # Section 5.6.7: #2, #4 and #6 only. Extra Credit: Do #5
 
 ## 2a) 
-```{r}
+```{r warning = FALSE, message = FALSE}
 library(tidyverse)
 library(nycflights13)
 
@@ -84,7 +84,6 @@ cancelled %>%
 
 
 
-## Extra Credit - 5)
 
 
 # Section 10.5: #1, #2, #3 and #6 only
@@ -133,7 +132,160 @@ my_tibble[[var]]
 
 - You have to extract the variable by using the double brackets, as in my_tibble[[var]]. Using the $ operator will look for a column called "var".
 
-## 6) 
+## 6) What option controls how many additional column names are printed at the footer of a tibble?
+
+- The n_extra option in the print.tbl() function controls the number of extra columns.
+
 
 # Section 12.3.3: #2, #3 and #4 only
-# Section 12.4.3: #1 and #2 onl 
+
+## 2) Why does this code fail?
+
+- This fails because 1999 and 2000 as read as numbers instead of strings that are column names. To fix this, you have to put them in quotes.
+
+```{r}
+table4a %>% 
+  gather("1999", "2000", key = "year", value = "cases")
+```
+
+
+
+## 3) Why does spreading this tibble fail? How could you add a new column to fix the problem?
+
+```{r}
+people <- tribble(
+  ~name,             ~key,    ~value,
+  #-----------------|--------|------
+  "Phillip Woods",   "age",       45,
+  "Phillip Woods",   "height",   186,
+  "Phillip Woods",   "age",       50,
+  "Jessica Cordero", "age",       37,
+  "Jessica Cordero", "height",   156
+)
+```
+
+
+- Spreading the tibble as is does not work because there are two values for the age of Phillip Woods. The spread function assumes that they are referring to the samee Phillip Woods.
+- You can fix this by adding a unique identifier, such as a row number:
+
+```{r}
+
+people %>%
+  mutate(rownum = row_number()) %>% 
+  group_by(rownum) %>% 
+  spread(key, value)
+
+
+```
+
+
+
+
+
+## 4) Tidy the simple tibble below. Do you need to spread or gather it? What are the variables?
+
+- In order to tidy the tibble, you need to gather it.
+- The variables are gender (male/female), count, and pregnant(yes/no).
+
+```{r}
+preg <- tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+
+preg %>% 
+  gather(male, female, key = "gender", value = "count")
+
+
+```
+
+
+
+# Section 12.4.3: #1 and #2 only
+
+## 1) What do the extra and fill arguments do in separate()? Experiment with the various options for the following two toy datasets.
+
+
+```{r}
+a <- tibble(x = c("a,b,c", "d,e,f,g", "h,i,j"))
+
+a %>% 
+  separate(x, c("one", "two", "three"), extra = "drop")
+
+a %>% 
+  separate(x, c("one", "two", "three"), extra = "warn")
+
+a %>% 
+  separate(x, c("one", "two", "three"), extra = "merge")
+
+```
+
+- "Extra" tells you what to do with the extra pieces.
+```{r}
+
+b <- tibble(x = c("a,b,c", "d,e", "f,g,i")) 
+
+b %>% 
+  separate(x, c("one", "two", "three"), fill = "warn")
+
+b %>% 
+  separate(x, c("one", "two", "three"), fill = "right")
+
+b %>% 
+  separate(x, c("one", "two", "three"), fill = "left")
+```
+
+- "Fill" tells you what to do when there are not enough pieces.
+
+  
+## 2) Both unite() and separate() have a remove argument. What does it do? Why would you set it to FALSE?
+
+- The remove argument removes the original input columns from the output dataframe. You would set it to FALSE if you want to see what the original was. 
+
+```{r}
+b %>% 
+  separate(x, c("one", "two", "three"), remove = "FALSE")
+
+b %>% 
+  separate(x, c("one", "two", "three"), remove = "TRUE")
+
+b %>% 
+  unite(new, remove = "TRUE")
+
+b %>% 
+  unite(new, remove = "FALSE")
+```
+
+# Follow these steps:
+
+## Download the baby_names.txt file from Canvas which is in the Homework 4 assignment section.
+## Load this file into R correctly and take a glimpse of the output.
+
+
+```{r}
+baby_names <- read.csv("baby_names.txt")
+
+glimpse(baby_names)
+```
+
+# Export this file as a csv file and call it ‘baby_names.csv’.
+
+```{r}
+write.csv(baby_names, file = "baby_names.csv")
+
+```
+
+
+# Reload the baby_names.csv file and take another glimpse.
+
+```{r}
+baby_names2 <- read.csv("baby_names.csv")
+
+glimpse(baby_names2)
+```
+
+
+## Show all of your code and the output. There should be two data import lines of code, one data export line of code, and two glimpses of the data.
+
+
