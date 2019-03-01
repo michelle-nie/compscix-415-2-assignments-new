@@ -6,6 +6,8 @@ output:
   html_document:
     df_print: paged
 ---
+My Github repository is located [HERE](https://github.com/michelle-nie/compscix-415-2-assignments-new)
+
 # The tidyverse packages
 
 ## Question 1: Can you name which package is associated with each task below?
