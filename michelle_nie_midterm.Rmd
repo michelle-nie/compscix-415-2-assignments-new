@@ -1,0 +1,293 @@
+---
+title: "Midterm"
+author: "Michelle Nie"
+date: "2/26/2019"
+output:
+  html_document:
+    df_print: paged
+---
+# The tidyverse packages
+
+## Question 1: Can you name which package is associated with each task below?
+  - Plotting - ggplot
+  - Data munging/wrangling - dplyr
+  - Reshaping (speading and gathering) data - tidyr
+  - Importing/exporting data - utils
+
+## Question 2: Now can you name two functions that you’ve used from each package that you listed above for these tasks?
+  - Plotting (ggplot)
+    - geom_plot
+    - geom_histogram
+  - Data munging/wrangling (dplyr)
+    - group_by
+    - summarize
+  - Reshaping data (tidyr)
+    - spread 
+    - gather
+  - Importing/exporting data (utils)
+    - read.csv
+    - write.csv
+    
+    
+# R Basics
+
+## Question 1: Fix this code with the fewest number of changes possible so it works:
+```{r}
+My_data.name___is.too00ooLong <- c( 1 , 2   , 3 ) 
+
+# removed the exclamation point (!)
+
+```
+
+
+## Question 2: Fix this code so it works:
+```{r}
+my_string <- c('has', 'an', 'error', 'in', 'it') 
+
+# corrected to a lowercase c; added an end quote (')
+```
+
+
+## Question 3: Look at the code below and comment on what happened to the values in the vector.
+
+```{r}
+my_vector <- c(1, 2, '3', '4', 5)
+my_vector
+```
+
+  - The values in the vector were all converted into strings because '3' and '4' were in quotes.
+    
+    
+# Data import/export
+
+- Download the rail_trail.txt file from Canvas (in the Midterm Exam section) and successfully import it into R. Prove that it was imported successfully by including your import code and taking a glimpse of the result.
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+
+rail_trail <- read.csv("rail_trail.txt")
+
+glimpse(rail_trail)
+
+```
+
+
+- Export the file into a comma-separated file and name it “rail_trail.csv”. Make sure you define the path correctly so that you know where it gets saved. Then reload the file. Include your export and import code and take another glimpse.    
+    
+
+```{r}
+rail_trail_export <- write.csv(rail_trail, file = "rail_trail.csv")
+
+rail_trail_csv <- read.csv("rail_trail.csv")
+
+glimpse(rail_trail)
+
+```
+
+# Visualization
+
+## Question 1: Critique this graphic: give only three examples of what is wrong with this graphic. Be concise.
+
+- 1) The data does not break down the responses of men and women by age group.
+- 2) The circles are too similarly sized and don't really visualize the data in a meaningful way
+- 3) The circles also make it impossible to tell the proportion of Yes's versus No's in each subgroup. 
+
+## Question 2: Reproduce this graphic using the diamonds data set.
+
+```{r}
+library(tidyverse)
+
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = cut, y = carat, fill = color), position = "identity") +
+  coord_flip() + 
+  xlab("CUT OF DIAMOND") + 
+  ylab("CARAT OF DIAMOND")
+
+```
+
+
+## Question 3: The previous graphic is not very useful. We can make it much more useful by changing one thing about it. Make the change and plot it again.
+
+
+
+```{r}
+
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = cut, y = carat, fill = color), position = "dodge") +
+  coord_flip() + 
+  xlab("CUT OF DIAMOND") + 
+  ylab("CARAT OF DIAMOND")
+
+
+```
+
+
+# Data munging and wrangling
+
+## Question 1: Is this data “tidy”? If yes, leave it alone and go to the next problem. If no, make it tidy. Note: this data set is called table2 and is available in the tidyverse package. It should be ready for you to use after you’ve loaded the tidyverse package.
+  - This data is not tidy because the "type" and "count" columns include more than one variable (cases and population).
+  
+```{r}
+table2
+
+tidy_table2 <- table2 %>% 
+  spread(key = "type", value = "count")
+
+tidy_table2
+
+```
+
+
+## Question 2: Create a new column in the diamonds data set called price_per_carat that shows the price of each diamond per carat (hint: divide). Only show me the code, not the output.
+
+```{r}
+diamonds2 <- diamonds %>% 
+  mutate(price_per_carat = price / carat)
+```
+
+
+## Question 3a: For each cut of diamond in the diamonds data set, how many diamonds, and what proportion, have a price > 10000 and a carat < 1.5? There are several ways to get to an answer, but your solution must use the data wrangling verbs from the tidyverse in order to get credit.
+
+```{r}
+diamonds %>%
+  summarize(
+    count = sum(price > 10000 & carat < 1.5, na.rm = TRUE),
+    prop = mean(price > 10000 & carat < 1.5, na.rm = TRUE)
+  )
+    
+```
+
+  - 834 diamonds (1.55% of total) have a price > 10k and a carat < 1.5.
+
+## Do the results make sense? Why?
+
+- The results make sense because the mean price is <$4k and the median price is $2.4k. Diamonds that are greater than $10k are uncommon and could be considered outliers, hence only 1.55% of all the diamonds fit this criteria.
+- On the other hand, the mean carat is .8 and the median is .7.
+
+```{r}
+diamonds %>%
+  summarize(
+    mean_price = mean(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE)
+  )
+
+
+
+diamonds %>%
+  summarize(
+    mean_carat = mean(carat, na.rm = TRUE),
+    median_carat = median(carat, na.rm = TRUE)
+  )
+    
+```
+
+## Do we need to be wary of any of these numbers? Why?
+
+- We need to be wary of the distribution of the prices and carats. The fact that 1.55% of diamonds fit the specified criteria may mean a lot or a little, depending on the distribution and the larger context.
+
+# EDA
+
+## Question 1: During what time period is this data from?
+
+```{r}
+glimpse(txhousing)
+
+txhousing %>% 
+  group_by(year) %>% 
+  summarize(count = sum(listings))
+
+```
+
+- The data is from 2000-2015.
+
+## Question 2: How many cities are represented?
+
+```{r}
+txhousing %>% 
+  count(city)
+```
+
+- There are 46 cities in the dataset.
+
+## Question 3: Which city, month and year had the highest number of sales?
+
+```{r}
+txhousing %>% 
+  group_by(city, month, year) %>% 
+  summarize(num_sales = sum(sales, na.rm = TRUE)) %>% 
+  arrange(desc(num_sales))
+```
+
+- Houston, July 2015
+
+## Question 4: What kind of relationship do you think exists between the number of listings and the number of sales? Check your assumption and show your work.
+
+```{r}
+txhousing %>%
+  group_by(city, month, year) %>% 
+  mutate(sales_vs_listings = sales / listings)
+```
+
+
+
+## Question 5: What proportion of sales is missing for each city?
+
+```{r}
+txhousing %>% 
+  group_by(city) %>% 
+  summarize(missing = mean(is.na(sales))) %>% 
+  arrange(desc(missing))
+```
+
+
+
+## Looking at only the cities and months with greater than 500 sales:
+
+## Question 6: Are the distributions of the median sales price (column name median), when grouped by city, different? The same? Show your work.
+
+
+
+```{r}
+city_month <- txhousing %>% 
+  group_by(city, month) %>% 
+  filter(sales > 500)
+
+ggplot(data = city_month) +
+  geom_histogram(mapping = aes(x = median))
+
+city_only <- txhousing %>% 
+  group_by(city) %>% 
+  filter(sales > 500)
+
+
+ggplot(data = city_only) +
+  geom_histogram(mapping = aes(x = median))
+```
+
+- The distributions are the same.
+
+## Question 7: Any cities that stand out that you’d want to investigate further?
+
+```{r}
+
+city_month %>% 
+  arrange(desc(sales))
+
+
+city_month %>% 
+  arrange(desc(median))
+  
+```
+
+- I would like to investivate Collin County and Fort Bend for having the highest median prices but relatively low sales numbers.
+- I would also investigate why Dallas has the highest sales in summer (June and July in particular). 
+
+## Question 8: Why might we want to filter out all cities and months with sales less than 500?
+
+- Data on cities and months with sales less than 500 are likely to be outliers and potentially skew the data. They are less statistically significant for our analysis purposes.
+
+
+
+
+
