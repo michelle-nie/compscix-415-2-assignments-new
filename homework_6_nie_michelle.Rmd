@@ -1,0 +1,154 @@
+---
+title: "COMPSCIX 415.2 Homework 6"
+author: "Michelle Nie"
+date: "3/10/19"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Exercise 1
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(mosaicData)
+
+glimpse(Whickham)
+
+```
+
+## Question 1:
+There are 3 variables: outcome, smoker, and age.
+
+## Question 2:
+There are 1314 observations which correspond to a subset of the survey sample of women who were or were not smokers. Each observation represents a different woman.
+
+## Question 3: 
+
+```{r}
+Whickham_table <- Whickham %>% count(smoker, outcome)
+
+ggplot(Whickham) +
+  geom_jitter(mapping = aes(x = smoker, y = outcome))
+```
+
+I see that there are similar numbers of those who are dead and alive, regardless of their smoker status. This graph is not particularly useful because it does not factor in age or any other variables.
+
+## Question 4:
+
+```{r}
+data(Whickham)
+
+Whickham_1 <- factor(Whickham$age)
+
+Whick_cat <- case_when(Whickham$age <= 44 ~ '<=44',
+                   Whickham$age > 44 & Whickham$age <= 64 ~ '44<x<=64',
+                   Whickham$age > 64 ~ '>64')
+
+
+Whick_fct <- factor(Whick_cat, ordered = TRUE)
+
+Whickham$age <- Whick_fct
+
+ggplot(Whickham) +
+  geom_jitter(mapping = aes(x = smoker, y = outcome, color = age))
+
+```
+I see from my visualization that people 44 and under are more likely to be alive, regardless of smoker status. Also, people over 64 are more likely to be dead, regardless of smoker status. People between 44 and 64 who are dead are more likely to have been smokers. This data makes sense based on the common knowledge that smoking is harmful and leads to early death. 
+
+
+# Exercise 2 
+
+## Question 1: 
+
+
+```{r}
+library(tidyverse)
+n <- 10000
+
+gamma_samp <- tibble(x = rgamma(n, shape = 1, scale = 2))
+
+ggplot(gamma_samp) + 
+  geom_histogram(mapping = aes(x))
+
+mean_samp <- gamma_samp %>% .[['x']] %>% mean()
+
+sd_samp <- gamma_samp %>% .[['x']] %>% sd()
+```
+
+## Question 2: 
+```{r}
+mean_samp
+sd_samp
+```
+
+
+The mean is 1.998419 and the standard deviation is 2.015053.
+
+## Question 3:
+```{r}
+samp_30 <- gamma_samp %>% sample_n(30)
+
+ggplot(samp_30) + 
+  geom_histogram(mapping = aes(x))
+
+mean(samp_30$x)
+sd(samp_30$x)
+```
+
+The mean of the sample of 30 is 1.938449 and the standard deviation is 1.162517.
+
+
+## Question 4:
+```{r}
+
+mean_samp <- rep(NA, 10000)
+
+for(i in 1:10000) {
+g_samp <- rgamma(30, shape = 1, scale = 2)
+mean_samp[i] <- mean(g_samp)
+}
+mean_samp <- tibble(mean_samp)
+```
+
+## Question 5:
+```{r}
+
+ggplot(mean_samp) + 
+  geom_histogram(mapping = aes(mean_samp))
+```
+
+## Question 6:  
+```{r}
+mean(mean_samp$mean_samp)
+sd(mean_samp$mean_samp)
+
+```
+
+The mean is 2.000272 and the standard deviation is 0.3636769.
+
+## Question 7:
+The standard deviation surprised me because I thought it should be close to 2.
+
+## Question 8:
+
+```{r}
+mean_samp2 <- rep(NA, 10000)
+
+for(i in 1:10000) {
+g_samp2 <- rgamma(30, shape = 1, scale = 2)
+mean_samp2[i] <- mean(g_samp2)
+}
+mean_samp2 <- tibble(mean_samp2)
+
+ggplot(mean_samp2) + 
+  geom_histogram(mapping = aes(mean_samp2))
+
+mean(mean_samp2$mean_samp2)
+sd(mean_samp2$mean_samp2)
+
+
+```
+
+The mean is close to 2 and the standard deviation is close to 0.365. The results match up well with the theorem.
