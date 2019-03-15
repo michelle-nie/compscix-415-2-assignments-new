@@ -1,0 +1,149 @@
+---
+title: "COMPSCIX 415.2 Homework 7"
+author: "Michelle Nie"
+date: "3/14/19"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Exercise 1
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(broom)
+
+train <- read.csv("C:/Users/mnie/Documents/RClass_Desktop/compscix-415-2-assignments-new/train.csv")
+
+train
+```
+
+- There are 1,460 observations and 81 columns.
+
+# Exercise 2:
+
+```{r}
+ggplot(train) +
+  geom_histogram(mapping = aes(SalePrice))
+
+
+ggplot(train) +
+  geom_point(mapping = aes(SalePrice, Neighborhood))
+
+
+ggplot(train) +
+  geom_point(mapping = aes(SalePrice, OverallQual))
+
+```
+
+
+# Exercise 3:
+
+```{r}
+(saleprice_lm <- lm(formula = SalePrice ~ SalePrice, data = train))
+tidy(saleprice_lm)
+
+SalePrice_avg <- mean(train$SalePrice)
+
+glance(saleprice_lm)
+
+
+```
+
+
+- The coefficient is $180,921  and the average value of SalePrice is $180,921.20, so they are approximately equal to each other.
+- The r-squared is 0
+
+
+
+# Exercise 4:
+
+```{r}
+(saleprice_mult_lm <- lm(formula = SalePrice ~ GrLivArea + OverallQual + Neighborhood, data = train))
+tidy(saleprice_mult_lm)
+
+glance(saleprice_lm)
+
+ BrkSide_avg <- train %>% 
+   filter(Neighborhood == "BrkSide") %>% 
+   summarize(mean(SalePrice)) 
+ 
+ SalePrice_avg <- mean(train$SalePrice)
+ 
+ SalePrice_avg - BrkSide_avg
+
+```
+
+- GrLivArea: For every one unit increase in square footage, the sale price increases, on average, by $55. The p-value is extremely small (2e-94), so the coefficient is significant. However, this coefficient may not be practically significant because the sale price increase is only $55. 
+- OverallQual: For every one unit increase in OverallQual, the sale price increases, on average, by $20,951. The p-value is also extremely small (1e-65), so the coefficient is significant. I believe this coefficient is practically significant because it is a meaningful predictor of sale price. 
+- NeighborhoodBrkSide: The average sale price is $13,025 less than the average. The p-value is approximately 0.2, which means it is somewhat significant. 
+
+- The model is not a good fit because the r-squared value is 0.
+
+
+# Exercise 6
+
+```{r}
+sim1a <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+sim1a_lm <- lm(formula = y ~ x, data = sim1a)
+tidy(sim1a_lm)
+glance(sim1a_lm)
+
+
+sim1b <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+sim1b_lm <- lm(formula = y ~ x, data = sim1b)
+tidy(sim1b_lm)
+glance(sim1b_lm)
+
+
+sim1c <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+sim1c_lm <- lm(formula = y ~ x, data = sim1c)
+tidy(sim1c_lm)
+glance(sim1c_lm)
+
+
+sim1d <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+sim1d_lm <- lm(formula = y ~ x, data = sim1d)
+tidy(sim1d_lm)
+glance(sim1d_lm)
+
+
+sim1e <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+sim1e_lm <- lm(formula = y ~ x, data = sim1e)
+tidy(sim1e_lm)
+glance(sim1e_lm)
+
+```
+
+
+- The coefficient of x varies, but ranges from 1.26 to 1.77
+- There is less variance around the r-squared value - it tends to be around 0.8 every time, meaning this model is likely a good fit.
+
+
+
+
+
+
+
+
+
+
+
+
+
