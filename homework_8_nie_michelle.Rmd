@@ -1,0 +1,51 @@
+---
+title: "COMPSCIX 415.2 Homework 8"
+author: "Michelle Nie"
+date: "3/22/19"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r warning=FALSE, message=FALSE}
+library(leaflet)
+library(jsonlite)
+library(shiny)
+
+
+dublin_url <- ("https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=f57c56ee5683249b1d4f1fb38009d48c83827c81")
+
+
+
+map_url <- function(city) {
+  url <- paste0("https://api.jcdecaux.com/vls/v1/stations?contract=",city,"&apiKey=f57c56ee5683249b1d4f1fb38009d48c83827c81")
+  df_api <- fromJSON(url) 
+  return(df_api)
+}
+
+
+map_latlong <- map_url("Luxembourg") %>% 
+  as.data.frame()
+
+
+leaflet() %>% 
+  setView(lng = mean(map_latlong$position.lng), lat = mean(map_latlong$position.lat), zoom = 14) %>% 
+  addTiles() 
+
+map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~lon, lat = ~lat, data = ucb_geo)
+map
+
+cholera <- leaflet(cholera_latlong) %>% 
+  addTiles() %>% 
+  addMarkers()
+
+
+
+
+```
+
+
+
