@@ -12,7 +12,7 @@ output:
 library(leaflet)
 library(jsonlite)
 library(shiny)
-
+library(tidyverse)
 
 dublin_url <- ("https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=f57c56ee5683249b1d4f1fb38009d48c83827c81")
 
@@ -20,29 +20,28 @@ dublin_url <- ("https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=
 
 map_url <- function(city) {
   url <- paste0("https://api.jcdecaux.com/vls/v1/stations?contract=",city,"&apiKey=f57c56ee5683249b1d4f1fb38009d48c83827c81")
-  df_api <- fromJSON(url) 
+  df_api <- fromJSON(url, flatten = TRUE) 
   return(df_api)
+}
+  
+map_it <- function(city) {
+
+map_latlong <- mutate(map_url(city), 
+    latitude = position.lat,
+    longitude = position.lng)
+
+final_map <- leaflet(map_latlong) %>% 
+  setView(lng = mean(map_latlong$longitude), lat = mean(map_latlong$latitude), zoom = 13) %>% 
+  addTiles() %>% 
+  addMarkers(label = ~as.character(available_bikes))
+
+return(final_map)
 }
 
 
-map_latlong <- map_url("Luxembourg") %>% 
-  as.data.frame()
-
-
-leaflet() %>% 
-  setView(lng = mean(map_latlong$position.lng), lat = mean(map_latlong$position.lat), zoom = 14) %>% 
-  addTiles() 
-
-map <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(lng = ~lon, lat = ~lat, data = ucb_geo)
-map
-
-cholera <- leaflet(cholera_latlong) %>% 
-  addTiles() %>% 
-  addMarkers()
-
-
+# test
+cities <- c('Luxembourg', 'Dublin', 'Brisbane', 'Seville', 'Stockholm', 'Ljubljana')
+map_it(cities[6])
 
 
 ```
