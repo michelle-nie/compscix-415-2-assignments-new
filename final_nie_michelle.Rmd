@@ -38,11 +38,6 @@ samp_fun(1000,0.5)
 ```
 
 ## Step 2
-Then write a loop that does this:
-
-Runs the above function 1000 times, with samp_size = 50 and samp_rate = 1/10000
-Saves all of the sample means in a vector called sample_means, and all of the sample standard deviations in a vector called sample_sds
-
 ```{r}
 
 sample_means <- rep(NA, 1000)
@@ -57,6 +52,8 @@ for (i in 1:1000) {
 }
 
 sample_means <- as.data.frame(sample_means)
+
+head(sample_means)
 
 ```
 
@@ -75,7 +72,9 @@ mean <- sapply(sample_means, mean, na.rm = TRUE)
 
 empirical_std_error <- mean / sqrt(50)
 
+std_dev
 theoretical_std_error
+mean
 empirical_std_error
 ```
 
@@ -110,6 +109,11 @@ mean_5000 <- sapply(sample_means_5000, mean, na.rm = TRUE)
 empirical_std_error_5000 <- mean / sqrt(5000)
 
 
+std_dev_5000
+theoretical_std_error_5000
+mean_5000
+empirical_std_error_5000
+
 ```
 
 
@@ -135,10 +139,7 @@ glance(train_lm)
 # Question 3
 
 ```{r}
-
 ab_test <- read.csv("/Users/Michelle/Desktop/compscix-415-2/ab_test_data.csv")
-
-View(ab_test)
 
 ```
 
