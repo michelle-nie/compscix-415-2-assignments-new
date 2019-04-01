@@ -1,0 +1,170 @@
+---
+title: "COMPSCIX 415.2 Homework 9/Final"
+author: "Michelle Nie"
+date: "3/31/19"
+output:
+  html_document:
+    df_print: paged
+---
+# Question 1
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(broom)
+
+# sample size
+samp_size <- 100
+# set the rate parameter
+samp_rate <- 1/10000
+
+# take sample
+rexp(n = samp_size, rate = samp_rate)
+
+```
+ 
+## Step 1 
+ 
+```{r}
+samp_fun <- function(samp_size, samp_rate) {
+  sample <- rexp(samp_size, samp_rate)
+  samp_avg <- mean(sample)
+  samp_std_dev <- sd(sample)
+  stats <- list(samp_avg = samp_avg, samp_std_dev = samp_std_dev)
+  return(stats)
+}
+
+# test
+samp_fun(1000,0.5)
+```
+
+## Step 2
+Then write a loop that does this:
+
+Runs the above function 1000 times, with samp_size = 50 and samp_rate = 1/10000
+Saves all of the sample means in a vector called sample_means, and all of the sample standard deviations in a vector called sample_sds
+
+```{r}
+
+sample_means <- rep(NA, 1000)
+
+sample_sds <- rep(NA, 1000)
+
+
+for (i in 1:1000) {
+  samp_fun_vector <- samp_fun(50, 1/10000) 
+  sample_means[i] <- samp_fun_vector$samp_avg
+  sample_sds[i] <- samp_fun_vector$samp_std_dev
+}
+
+sample_means <- as.data.frame(sample_means)
+
+```
+
+
+## Step 3
+
+```{r}
+ggplot(sample_means) + 
+  geom_histogram(mapping = aes(sample_means))
+
+std_dev <- sapply(sample_means, sd, na.rm = TRUE)
+
+theoretical_std_error <- std_dev / sqrt(50)
+
+mean <- sapply(sample_means, mean, na.rm = TRUE)
+
+empirical_std_error <- mean / sqrt(50)
+
+theoretical_std_error
+empirical_std_error
+```
+
+
+## Step 4
+
+```{r}
+
+sample_means_5000 <- rep(NA, 1000)
+
+sample_sds_5000 <- rep(NA, 1000)
+
+
+for (i in 1:1000) {
+  samp_fun_vector_5000 <- samp_fun(5000, 1/10000) 
+  sample_means_5000[i] <- samp_fun_vector_5000$samp_avg
+  sample_sds_5000[i] <- samp_fun_vector_5000$samp_std_dev
+}
+
+sample_means_5000 <- as.data.frame(sample_means_5000)
+
+
+ggplot(sample_means_5000) + 
+  geom_histogram(mapping = aes(sample_means_5000))
+
+std_dev_5000 <- sapply(sample_means_5000, sd, na.rm = TRUE)
+
+theoretical_std_error_5000 <- std_dev_5000 / sqrt(5000)
+
+mean_5000 <- sapply(sample_means_5000, mean, na.rm = TRUE)
+
+empirical_std_error_5000 <- mean / sqrt(5000)
+
+
+```
+
+
+# Question 2
+
+
+```{r}
+train <- read.csv("/Users/Michelle/Desktop/compscix-415-2/train.csv")
+
+train_lm <- lm(formula = SalePrice ~ LotArea + OverallQual + ExterQual, data = train)
+tidy(train_lm)
+glance(train_lm)
+
+
+```
+
+
+- Coefficient on LotArea: 1.45 - for every one unit increase in LotArea (in sqft), the sale price increases by $1.45. 
+- Coefficient on ExterQualGd: 71,529.50 -  compared to ExterQualEx (a house with excellent quality of the material on the exterior), a house with a good quality of exterior material is $71,529.50 cheaper. 
+- The adjusted r-squared value in HW 7 was 0.783. The adjusted r-squared value here is 0.694. This means that the HW 7 model was a better fit than this current model.
+
+
+# Question 3
+
+```{r}
+
+ab_test <- read.csv("/Users/Michelle/Desktop/compscix-415-2/ab_test_data.csv")
+
+View(ab_test)
+
+```
+
+## a)
+The conversion rate for A is 0.0415 (83/2000) and the conversion rate for B is 0.1 (200/2000).
+
+## b) 
+
+```{r}
+true_a <- 0.0415
+true_b <- 0.1
+n_a <- 2000
+n_b <- 2000
+
+set.seed(10)
+samp_a <- rbinom(n = 1, size = n_a, prob = true_a)
+samp_b <- rbinom(n = 1, size = n_b, prob = true_b)
+
+
+samp_a
+samp_b
+
+proptest <- prop.test(c(samp_a, samp_b), c(2000, 2000))
+proptest$p.value
+
+
+```
+
+The p-value is 1.25388e-10.
